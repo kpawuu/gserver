@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/kpawuu/gserver#readme",
   "dependencies": {
+    "gun": "^0.9.9",
     "gun-server": "^1.0.0"
   }
 }

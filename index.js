@@ -1,24 +1,27 @@
-// import the native http module
-var http = require('http')
 
-// import gun
-var Gun = require('gun')
+'use strict';
 
-// create a new gun instance
-var gun = new Gun()
+var Gun = require('gun');
+var http = require('http');
+var port = process.env.PORT || 8080;
+var fs = require('fs');
 
-// create a new server instance
-var server = new http.Server()
+// Listens on /gun.js route.
+var server = http.Server();
 
-// add the /gun.js route to your server
-server.on('request', gun.wsp.server)
+// Serves up /index.html
+server.on('request', function (req, res) {
+	if(Gun.serve(req, res)){ return }
+	if (req.url === '/' || req.url === '/index.html') {
+		fs.createReadStream('index.html').pipe(res);
+	}
+});
 
-/*
-  Handle incoming gun traffic
-  from clients (that's where the
-  real-time goodness comes from).
-*/
-gun.wsp(server)
+var gun = Gun({
+	file: 'data.json', // Saves all data to `data.json`.
+	web: server // Handles real-time requests and updates.
+});
 
-// start listening for requests on `localhost:8080`
-server.listen(8080)
+server.listen(port, function () {
+	console.log('\nApp listening on port', port);
+});
